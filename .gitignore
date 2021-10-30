@@ -1,1 +1,2 @@
 *.json
+/react-site/node_modules/
