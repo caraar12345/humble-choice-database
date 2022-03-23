@@ -21,6 +21,17 @@ game_expressions = {
   'developers': '$.developers',
   'genres': '$.genres'
 }
+choiceless_game_expressions = {
+  'game': '$.contentChoiceOptions.contentChoiceData.game_data.*',
+  'title': '$.title',
+  'description': '$.description',
+  'image': '$.image',
+  'user_rating': '$.user_rating."steam_percent|decimal"',
+  'platforms': '$.platforms',
+  'msrp': '$."msrp|money".amount',
+  'developers': '$.developers',
+  'genres': '$.genres'
+}
 extras_expressions = {
   'extras': '$.contentChoiceOptions.contentChoiceData.extras[*]',
   'title': '$.human_name',
@@ -78,8 +89,13 @@ for year in range(2019,current_year+2):
       print(choice_id)
       ## Converts the JSON data to a dictionary
       json_choices = json.loads(choices)
-      ## Gets the list of games from the JSON data
-      games = parse(game_expressions['game']).find(json_choices)
+      choiceless = parse("$.productIsChoiceless").find(json_choices)[0].value
+      print(choiceless)
+      if choiceless:
+          games = parse(choiceless_game_expressions['game']).find(json_choices)
+      else:
+        ## Gets the list of games from the JSON data
+        games = parse(game_expressions['game']).find(json_choices)
       ## Gets the list of extras from the JSON data
       extras = parse(extras_expressions['extras']).find(json_choices)
       ## Sets up this month's dictionary in all_games
