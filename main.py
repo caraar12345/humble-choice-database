@@ -90,7 +90,6 @@ for year in range(2019,current_year+2):
       ## Converts the JSON data to a dictionary
       json_choices = json.loads(choices)
       choiceless = parse("$.productIsChoiceless").find(json_choices)[0].value
-      print(choiceless)
       if choiceless:
           games = parse(choiceless_game_expressions['game']).find(json_choices)
       else:
