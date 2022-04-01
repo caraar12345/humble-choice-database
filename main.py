@@ -129,5 +129,5 @@ for year in range(2019,current_year+2):
     break
 
 ## Writes the dictionary to a JSON file
-with open("export.json", "w") as export_file:
+with open("humble-choices/data/export.json", "w") as export_file:
   export_file.write(json.dumps(all_games))
