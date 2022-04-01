@@ -59,7 +59,8 @@ def generate_extras_details(extras,humble_type):
       extras_details[key] = parse(value).find(extras.value)[0].value
   return extras_details
 
-all_games = {}
+all_games = []
+order = 0
 
 for year in range(2019,current_year+2):
     year = str(year)
@@ -68,6 +69,7 @@ for year in range(2019,current_year+2):
       if int(month_num) < 12 and year == '2019':
         continue
       ## Generates the URL for the month: https://www.humblebundle.com/subscription/january-2020 etc.
+      order += 1
       choice_id = month+'-'+year
       url = humble_base_url + month + '-' + year
       #if month != 'december' and year == '2019':
@@ -98,7 +100,14 @@ for year in range(2019,current_year+2):
       ## Gets the list of extras from the JSON data
       extras = parse(extras_expressions['extras']).find(json_choices)
       ## Sets up this month's dictionary in all_games
-      all_games[choice_id] = {'url': url}
+      this_month = {
+        'order': order,
+        'month': choice_id,
+        'url': url,
+        'games': [],
+        'extras': []
+      }
+
       ## Sets up the games and extras lists
       this_months_games = []
       this_months_extras = []
@@ -114,7 +123,7 @@ for year in range(2019,current_year+2):
           game_details = generate_game_details(game, excluded_details=['game','user_rating'], humble_type=humble_type)
         this_months_games.append(game_details)
       ## Sets the games list in the month's dictionary
-      all_games[choice_id]['games'] = this_months_games
+      this_month['games'] = this_months_games
 
       ## Loops through each extra
       for extra in extras:
@@ -123,11 +132,13 @@ for year in range(2019,current_year+2):
         ## Adds the extras details to the extras list
         this_months_extras.append(extras_details)
       ## Sets the extras list in the month's dictionary
-      all_games[choice_id]['extras'] = this_months_extras
+      this_month['extras'] = this_months_extras
+      ## Adds the month's dictionary to all_games
+      all_games.append(this_month)
     else:
       continue
     break
 
 ## Writes the dictionary to a JSON file
-with open("humble-choices/data/export.json", "w") as export_file:
+with open("export.json", "w") as export_file:
   export_file.write(json.dumps(all_games))
